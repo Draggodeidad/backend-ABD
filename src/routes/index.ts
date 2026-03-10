@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import healthRouter from './health.route';
 import authRouter from './auth.routes';
+import carrerasRouter from './carreras.routes';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use('/health', healthRouter);
 // Add new route modules here
 // router.use('/users', usersRouter);
 router.use('/auth', authRouter);
+router.use('/carreras', carrerasRouter);
 
 export default router;
