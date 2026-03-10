@@ -2,6 +2,7 @@ import { Router } from 'express';
 import healthRouter from './health.route';
 import authRouter from './auth.routes';
 import carrerasRouter from './carreras.routes';
+import gruposRouter from './grupos.routes';
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.use('/health', healthRouter);
 // router.use('/users', usersRouter);
 router.use('/auth', authRouter);
 router.use('/carreras', carrerasRouter);
+router.use(gruposRouter);
 
 export default router;
