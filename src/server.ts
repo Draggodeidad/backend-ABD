@@ -6,6 +6,7 @@ const server = app.listen(env.port, () => {
     logger.info(`🚀 Server running in ${env.nodeEnv} mode on port ${env.port}`);
     logger.info(`📖 Swagger docs available at http://localhost:${env.port}/api-docs`);
     logger.info(`🔗 API base URL: http://localhost:${env.port}${env.apiPrefix}`);
+    logger.info(`Health check available at http://localhost:${env.port}/health`)
 });
 
 // ─── Graceful Shutdown ───────────────────────────────────────────────────────

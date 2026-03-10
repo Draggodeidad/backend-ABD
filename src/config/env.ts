@@ -16,6 +16,11 @@ export const env = {
     logLevel: getEnv('LOG_LEVEL', 'info'),
     corsOrigin: getEnv('CORS_ORIGIN', '*'),
     apiPrefix: getEnv('API_PREFIX', '/api/v1'),
+    supabase: {
+        url: getEnv('SUPABASE_URL'),
+        anonKey: getEnv('SUPABASE_ANON_KEY'),
+        serviceRoleKey: getEnv('SUPABASE_SERVICE_ROLE_KEY'),
+    },
     isDevelopment: (process.env.NODE_ENV ?? 'development') === 'development',
     isProduction: process.env.NODE_ENV === 'production',
 };
