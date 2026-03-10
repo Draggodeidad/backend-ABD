@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { supabase } from '../config/supabase';
+import { supabaseAdmin } from '../config/supabase';
 
 /**
  * Controller for authentication related operations
@@ -20,7 +20,7 @@ export const syncProfile = async (req: Request, res: Response) => {
         const avatarUrl = user_metadata?.avatar_url || user_metadata?.picture || null;
 
         // Sync profile data in the database
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('profiles')
             .upsert({
                 id: id,
