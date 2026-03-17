@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import healthRouter from './health.route';
+import asignacionesRouter from './asignaciones.routes';
 import authRouter from './auth.routes';
 import carrerasRouter from './carreras.routes';
 import gruposRouter from './grupos.routes';
@@ -20,6 +21,7 @@ router.use('/health', healthRouter);
 // router.use('/users', usersRouter);
 router.use('/auth', authRouter);
 router.use('/carreras', carrerasRouter);
+router.use(asignacionesRouter);
 router.use(gruposRouter);
 router.use(materiasRouter);
 router.use(profesoresRouter);
