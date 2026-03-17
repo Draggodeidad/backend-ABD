@@ -57,10 +57,10 @@ interface ScheduleResult {
 
 // ─── Step A: Get Group Config ────────────────────────────────────
 async function getGrupoConfig(grupoId: string) {
-    // Fetch the group
+    // Fetch the group (now including turno)
     const { data: grupo, error: grupoError } = await supabaseAdmin
         .from('grupos')
-        .select('carrera_id, hora_inicio, hora_fin, duracion_bloque')
+        .select('carrera_id, turno, hora_inicio, hora_fin, duracion_bloque')
         .eq('id', grupoId)
         .single();
 
@@ -91,6 +91,7 @@ async function getGrupoConfig(grupoId: string) {
 
     return {
         carreraId: grupo.carrera_id as string,
+        turno: grupo.turno as string,
         horaInicio: horaInicio as string,
         horaFin: horaFin as string,
         duracionBloque: duracionBloque as number,
@@ -98,22 +99,37 @@ async function getGrupoConfig(grupoId: string) {
 }
 
 // ─── Step B: Build Slots Matrix ──────────────────────────────────
+// Receso matutino: 09:30 (570 min) a 10:00 (600 min)
+const BREAK_START = 570; // 09:30 in minutes from midnight
+const BREAK_END   = 600; // 10:00 in minutes from midnight
+
 function buildSlotsMatrix(
     horaInicio: string,
     horaFin: string,
-    duracion: number
+    duracion: number,
+    turno: string
 ): Slot[] {
     const startMin = timeToMinutes(horaInicio);
     const endMin = timeToMinutes(horaFin);
+    const hasBreak = turno === 'matutino';
     const slots: Slot[] = [];
 
     for (let day = 1; day <= 5; day++) {
         let current = startMin;
         while (current + duracion <= endMin) {
+            const slotEnd = current + duracion;
+
+            // If matutino and slot overlaps the break window (570–600),
+            // skip ahead to 10:00 (600 min) and try again
+            if (hasBreak && current < BREAK_END && slotEnd > BREAK_START) {
+                current = BREAK_END;
+                continue;
+            }
+
             slots.push({
                 day,
                 startMin: current,
-                endMin: current + duracion,
+                endMin: slotEnd,
                 taken: false,
             });
             current += duracion;
@@ -377,7 +393,7 @@ export async function generateSchedule(
     }
 
     // Step B: Build slots matrix
-    const slots = buildSlotsMatrix(config.horaInicio, config.horaFin, config.duracionBloque);
+    const slots = buildSlotsMatrix(config.horaInicio, config.horaFin, config.duracionBloque, config.turno);
 
     // Step C: Assignments with remaining hours
     const asignaciones = await getAsignacionesConHoras(grupoId);

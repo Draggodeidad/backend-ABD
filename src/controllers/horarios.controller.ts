@@ -82,10 +82,10 @@ export const getHorario = async (req: Request, res: Response) => {
     const userId = req.user?.id;
 
     try {
-        // 1. Fetch group to get its career
+        // 1. Fetch group to get its career AND turno
         const { data: grupo, error: grupoError } = await supabaseAdmin
             .from('grupos')
-            .select('carrera_id')
+            .select('carrera_id, turno')
             .eq('id', grupoId)
             .single();
 
@@ -138,7 +138,7 @@ export const getHorario = async (req: Request, res: Response) => {
             });
         }
 
-        // 4. Group blocks by day name
+        // 4. Group blocks by day name, adding tipo: 'clase'
         const schedule: Record<string, any[]> = {
             lunes: [],
             martes: [],
@@ -153,6 +153,7 @@ export const getHorario = async (req: Request, res: Response) => {
 
             schedule[dayName]?.push({
                 id: bloque.id,
+                tipo: 'clase',
                 hora_inicio: bloque.hora_inicio,
                 hora_fin: bloque.hora_fin,
                 materia: asig?.materia?.nombre || null,
@@ -161,6 +162,29 @@ export const getHorario = async (req: Request, res: Response) => {
                 salon_id: bloque.salon_id,
                 notas: bloque.notas,
             });
+        }
+
+        // 5. Inject synthetic receso block for matutino shifts
+        if (grupo.turno === 'matutino') {
+            const recesoBlock = {
+                id: null,
+                tipo: 'receso',
+                hora_inicio: '09:30',
+                hora_fin: '10:00',
+                materia: null,
+                codigo: null,
+                profesor: null,
+                salon_id: null,
+                notas: 'Receso',
+            };
+
+            for (const dayKey of Object.keys(schedule)) {
+                schedule[dayKey].push({ ...recesoBlock });
+                // Re-sort by hora_inicio so receso sits in the right position
+                schedule[dayKey].sort((a: any, b: any) =>
+                    a.hora_inicio.localeCompare(b.hora_inicio)
+                );
+            }
         }
 
         return res.status(200).json({
