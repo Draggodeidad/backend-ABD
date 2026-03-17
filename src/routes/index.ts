@@ -3,6 +3,7 @@ import healthRouter from './health.route';
 import authRouter from './auth.routes';
 import carrerasRouter from './carreras.routes';
 import gruposRouter from './grupos.routes';
+import materiasRouter from './materias.routes';
 import profesoresRouter from './profesores.routes';
 
 const router = Router();
@@ -20,6 +21,7 @@ router.use('/health', healthRouter);
 router.use('/auth', authRouter);
 router.use('/carreras', carrerasRouter);
 router.use(gruposRouter);
+router.use(materiasRouter);
 router.use(profesoresRouter);
 
 export default router;
