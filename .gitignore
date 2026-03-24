@@ -33,3 +33,4 @@ coverage/
 Seed.sql
 esquemaGeneradorHorarios.sql
 bruno-collection/
+01_configuracion_carrera.sql

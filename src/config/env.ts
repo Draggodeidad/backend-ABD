@@ -14,7 +14,9 @@ export const env = {
     nodeEnv: getEnv('NODE_ENV', 'development'),
     port: Number(getEnv('PORT', '3000')),
     logLevel: getEnv('LOG_LEVEL', 'info'),
-    corsOrigin: getEnv('CORS_ORIGIN', '*'),
+    corsOrigin: getEnv('CORS_ORIGIN', '*') === '*' 
+        ? '*' 
+        : getEnv('CORS_ORIGIN', '*').split(',').map(o => o.trim()),
     apiPrefix: getEnv('API_PREFIX', '/api/v1'),
     supabase: {
         url: getEnv('SUPABASE_URL'),
