@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
 import swaggerUi from 'swagger-ui-express';
+import rateLimit from 'express-rate-limit';
 import { env } from './config/env';
 import { logger } from './config/logger';
 import { swaggerSpec } from './config/swagger';
@@ -20,6 +21,14 @@ app.use(
         credentials: true,
     }),
 );
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use(limiter);
 
 // ─── Request Logging ─────────────────────────────────────────────────────────
 app.use(pinoHttp({ logger }));

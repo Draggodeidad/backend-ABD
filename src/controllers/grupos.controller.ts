@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { supabaseAdmin } from '../config/supabase';
+import { validateGrupoSchedule } from '../utils/time-validation';
 
 /**
  * Controller for Grupos CRUD operations
@@ -45,6 +46,14 @@ export const createGrupo = async (req: Request, res: Response) => {
         return res.status(400).json({
             status: 'error',
             message: 'Grado, seccion and turno are required',
+        });
+    }
+
+    const scheduleCheck = validateGrupoSchedule(turno, hora_inicio, hora_fin);
+    if (!scheduleCheck.valid) {
+        return res.status(400).json({
+            status: 'error',
+            message: scheduleCheck.message,
         });
     }
 
@@ -105,6 +114,16 @@ export const updateGrupo = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { grado, seccion, turno, hora_inicio, hora_fin, duracion_bloque } = req.body;
     const userId = req.user?.id;
+
+    if (turno) {
+        const scheduleCheck = validateGrupoSchedule(turno, hora_inicio, hora_fin);
+        if (!scheduleCheck.valid) {
+            return res.status(400).json({
+                status: 'error',
+                message: scheduleCheck.message,
+            });
+        }
+    }
 
     try {
         // 1. Find the career of the group

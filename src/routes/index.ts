@@ -3,10 +3,13 @@ import healthRouter from './health.route';
 import asignacionesRouter from './asignaciones.routes';
 import authRouter from './auth.routes';
 import carrerasRouter from './carreras.routes';
+import colaboradoresRouter from './colaboradores.routes';
+import configRouter from './config.routes';
 import gruposRouter from './grupos.routes';
 import horariosRouter from './horarios.routes';
 import materiasRouter from './materias.routes';
 import profesoresRouter from './profesores.routes';
+import salonesRouter from './salones.routes';
 
 const router = Router();
 
@@ -22,6 +25,9 @@ router.use('/health', healthRouter);
 // router.use('/users', usersRouter);
 router.use('/auth', authRouter);
 router.use('/carreras', carrerasRouter);
+router.use(colaboradoresRouter);
+router.use(configRouter);
+router.use(salonesRouter);
 router.use(asignacionesRouter);
 router.use(gruposRouter);
 router.use(horariosRouter);
