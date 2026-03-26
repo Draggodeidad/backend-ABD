@@ -90,6 +90,15 @@ export const createGrupo = async (req: Request, res: Response) => {
             .single();
 
         if (error) {
+            // Si existe el grupo por unicidad (carrera_id, grado, seccion, turno)
+            if (error.code === '23505') {
+                return res.status(409).json({
+                    status: 'error',
+                    message: 'Group already exists for this career/grade/section/turno',
+                    details: error.message,
+                });
+            }
+
             return res.status(500).json({
                 status: 'error',
                 message: 'Failed to create group',
@@ -173,6 +182,14 @@ export const updateGrupo = async (req: Request, res: Response) => {
             .single();
 
         if (updateError) {
+            if (updateError.code === '23505') {
+                return res.status(409).json({
+                    status: 'error',
+                    message: 'Group already exists for this career/grade/section/turno',
+                    details: updateError.message,
+                });
+            }
+
             return res.status(500).json({
                 status: 'error',
                 message: 'Failed to update group',
